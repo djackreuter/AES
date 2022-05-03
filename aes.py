@@ -13,7 +13,7 @@ def encrypt(data, padding):
     ct = cipher.encrypt(pad(data, AES.block_size))
 
     p = '02x' if padding == True else '1x'
-    print('char key[] = { 0x' + ', 0x'.join(format(x, p) for x in ct) + '};')
+    print('char key[] = { 0x' + ', 0x'.join(format(x, p) for x in key) + '};')
     print('{ 0x' + ', 0x'.join(format(x, p) for x in ct) + '};')
 
 
