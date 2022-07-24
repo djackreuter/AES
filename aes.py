@@ -8,10 +8,16 @@ from Crypto.Util.Padding import pad
 from Crypto.Random import get_random_bytes
 
 
-def encrypt(data, padding):
-    key = get_random_bytes(16)
+def encrypt(data, padding, key_size):
+    key = get_random_bytes(key_size)
     cipher = AES.new(key, AES.MODE_CBC)
     ct = cipher.encrypt(pad(data, AES.block_size))
+    if key_size == 16:
+        print("AES-128")
+    elif key_size == 24:
+        print("AES-192")
+    elif key_size == 32:
+        print("AES-256")
     print("IV: ", fmt_output(cipher.iv, padding))
     print("KEY: ", fmt_output(key, padding))
     return ct
@@ -34,16 +40,23 @@ if __name__ == '__main__':
     parser.add_argument(
         '-w', help="File to write encrypted binary payload to. If omitted, output it formatted into byte array and saved to as random uuid filename."
     )
+    parser.add_argument(
+        '-k', type=int, help='Key size. Can be 16, 24 or 32 bytes long (respectively for AES-128, AES-192 or AES-256).'
+    )
     args = parser.parse_args()
     if args.f == None:
         parser.print_help()
         sys.exit()
 
+    if args.k != 16 and args.k != 24 and args.k != 32:
+        print("[!] Invalid or missing key size! Defaulting to 128")
+        args.k = 16
+
     with open(args.f, mode='rb') as file:
         buf = file.read()
         file.close()
         
-        ciphertext = encrypt(buf, args.pad)
+        ciphertext = encrypt(buf, args.pad, args.k)
 
     if args.w != None:
         with open(args.w, mode='wb') as file:
