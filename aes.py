@@ -20,6 +20,7 @@ def encrypt(data, padding, key_size):
         print("AES-256")
     print("IV: ", fmt_output(cipher.iv, padding))
     print("KEY: ", fmt_output(key, padding))
+    print("PAYLOAD SIZE: ", len(ct))
     return ct
 
 
