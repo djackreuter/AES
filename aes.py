@@ -18,8 +18,8 @@ def encrypt(data, padding, key_size):
         print("AES-192")
     elif key_size == 32:
         print("AES-256")
-    print("IV: ", fmt_output(cipher.iv, padding))
     print("KEY: ", fmt_output(key, padding))
+    print("IV: ", fmt_output(cipher.iv, padding))
     print("PAYLOAD SIZE: ", len(ct))
     return ct
 
@@ -39,7 +39,7 @@ if __name__ == '__main__':
         '--pad', dest='pad', help='Pad with 0 so all output is 2 chars wide 0x0 => 0x00', action=argparse.BooleanOptionalAction, default='--no-pad'
     )
     parser.add_argument(
-        '-w', help="File to write encrypted binary payload to. If omitted, output it formatted into byte array and saved to as random uuid filename."
+        '--raw', dest='raw', help='Data will be saved as raw binary file.', action=argparse.BooleanOptionalAction, default='--no-raw'
     )
     parser.add_argument(
         '-k', type=int, help='Key size. Can be 16, 24 or 32 bytes long (respectively for AES-128, AES-192 or AES-256).'
@@ -56,15 +56,15 @@ if __name__ == '__main__':
     with open(args.f, mode='rb') as file:
         buf = file.read()
         file.close()
-        
         ciphertext = encrypt(buf, args.pad, args.k)
-
-    if args.w != None:
-        with open(args.w, mode='wb') as file:
-            file.write(ciphertext)
-            file.close
-    else:
         f_name = uuid.uuid4()
+
+    if args.raw == True:
+        with open(f"{f_name}.txt", mode='wb') as file:
+            file.write(ciphertext)
+            file.close()
+            print(f"[+] Encrypted binary payload saved as {f_name}.txt!")
+    else:
         file = open(f"{f_name}.txt", "w") 
         file.write(fmt_output(ciphertext, args.pad))
         file.close()
