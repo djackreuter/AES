@@ -1,5 +1,6 @@
 # AES
 Python3 AES Encryption
+Writes encrypted data to a random uuid filename.
 
 ```bash
 usage: aes.py [-h] [-f F] [--pad | --no-pad] [--raw | --no-raw] [-k K]
